@@ -178,7 +178,7 @@ export default function CinematicScroll() {
     // Seek-throttling requestAnimationFrame loop to ensure buttery-smooth scrubbing
     let rafId: number;
     let lastUpdate = 0;
-    const throttleMs = 60; // Throttled updates on mobile (approx 16fps) to allow decoder catch-up
+    const throttleMs = 33; // 30 FPS update rate for smooth seeking on optimized mobile video
 
     const updateVideo = (now: number) => {
       const vid = videoRef.current;
