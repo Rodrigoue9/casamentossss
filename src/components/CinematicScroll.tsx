@@ -60,6 +60,46 @@ export default function CinematicScroll() {
     return () => window.removeEventListener("resize", handleResize);
   }, [videoSrc]);
 
+  // Force load, event binding, and mobile unlock for the video element
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video || !videoSrc) return;
+
+    setIsVideoLoaded(false);
+
+    const onLoaded = () => {
+      setIsVideoLoaded(true);
+      video.currentTime = 0;
+    };
+
+    // If metadata is already loaded (from cache or fast load)
+    if (video.readyState >= 1) {
+      onLoaded();
+    }
+
+    video.addEventListener("loadedmetadata", onLoaded);
+    video.addEventListener("loadeddata", onLoaded);
+    video.load();
+
+    // Critical iOS Safari unlock: warming up the video on first touch/click
+    const unlockVideo = () => {
+      video.play().then(() => {
+        video.pause();
+      }).catch(err => console.log("Video unlock failed:", err));
+      window.removeEventListener("touchstart", unlockVideo);
+      window.removeEventListener("click", unlockVideo);
+    };
+    window.addEventListener("touchstart", unlockVideo);
+    window.addEventListener("click", unlockVideo);
+
+    return () => {
+      video.removeEventListener("loadedmetadata", onLoaded);
+      video.removeEventListener("loadeddata", onLoaded);
+      window.removeEventListener("touchstart", unlockVideo);
+      window.removeEventListener("click", unlockVideo);
+    };
+  }, [videoSrc]);
+
   // Master GSAP ScrollTrigger timeline configuration
   useEffect(() => {
     const video = videoRef.current;
@@ -136,12 +176,27 @@ export default function CinematicScroll() {
 
     // Seek-throttling requestAnimationFrame loop to ensure buttery-smooth scrubbing
     let rafId: number;
-    const updateVideo = () => {
+    let lastUpdate = 0;
+    const throttleMs = 40; // Approx 25 FPS update rate for mobile seeking
+
+    const updateVideo = (now: number) => {
       const vid = videoRef.current;
-      if (vid && !vid.seeking && !isNaN(vid.duration)) {
+      if (vid && !isNaN(vid.duration)) {
         const diff = targetTimeRef.current - vid.currentTime;
         if (Math.abs(diff) > 0.01) {
-          vid.currentTime = targetTimeRef.current;
+          const isMobile = window.innerWidth < 768;
+          if (isMobile) {
+            // Mobile: throttle seek rate to prevent UI lag
+            if (!vid.seeking && (now - lastUpdate > throttleMs)) {
+              vid.currentTime = targetTimeRef.current;
+              lastUpdate = now;
+            }
+          } else {
+            // Desktop: no throttle, just avoid seeker overlap
+            if (!vid.seeking) {
+              vid.currentTime = targetTimeRef.current;
+            }
+          }
         }
       }
       rafId = requestAnimationFrame(updateVideo);
