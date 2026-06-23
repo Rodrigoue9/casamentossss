@@ -1,0 +1,12 @@
+CREATE DATABASE IF NOT EXISTS `sitecasamento`;
+USE `sitecasamento`;
+
+CREATE TABLE IF NOT EXISTS `convidados` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `nome` VARCHAR(255) NOT NULL,
+  `telefone` VARCHAR(50) NOT NULL,
+  `acompanhantes` INT NOT NULL DEFAULT 0,
+  `mensagem` TEXT,
+  `presenca` TINYINT NOT NULL DEFAULT 1,
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

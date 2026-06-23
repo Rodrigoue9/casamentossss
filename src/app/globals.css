@@ -1,0 +1,89 @@
+@import "tailwindcss";
+
+@theme {
+  --color-lavender-light: #eae3f1;
+  --color-lavender-medium: #d4c5e2;
+  --color-lavender-dark: #7a5c96;
+  --color-gold-light: #f6ecbe;
+  --color-gold-medium: #dfba53;
+  --color-gold-dark: #b89127;
+  --color-pearl-white: #fdfcf7;
+  --font-serif: var(--font-playfair), serif;
+  --font-sans: var(--font-montserrat), sans-serif;
+}
+
+:root {
+  --background: #0f0b18;
+  --foreground: #fdfcf7;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  overflow-x: hidden;
+}
+
+/* Custom premium scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #0f0b18;
+}
+::-webkit-scrollbar-thumb {
+  background: #392850;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #50376e;
+}
+
+/* Custom classes for cinematic styling */
+.text-stroke-gold {
+  -webkit-text-stroke: 1px rgba(223, 186, 83, 0.4);
+  color: transparent;
+}
+
+.glassmorphism {
+  background: rgba(25, 17, 39, 0.5);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(223, 186, 83, 0.15);
+}
+
+.glassmorphism-light {
+  background: rgba(253, 252, 247, 0.05);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(253, 252, 247, 0.1);
+}
+
+/* Hardware acceleration helper for rendering panels */
+.gpu-accelerated {
+  will-change: opacity, transform;
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+/* Hide defaults for lenis scroll */
+html.lenis, html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
+}
