@@ -69,7 +69,14 @@ export default function CinematicScroll() {
 
     const onLoaded = () => {
       setIsVideoLoaded(true);
-      video.currentTime = 0;
+      const isMobile = window.innerWidth < 768;
+      if (isMobile) {
+        video.loop = true;
+        video.play().catch(err => console.log("Play failed:", err));
+      } else {
+        video.currentTime = 0;
+        video.pause();
+      }
     };
 
     // If metadata is already loaded (from cache or fast load)
@@ -83,9 +90,15 @@ export default function CinematicScroll() {
 
     // Critical iOS Safari unlock: warming up the video on first touch/click
     const unlockVideo = () => {
-      video.play().then(() => {
-        video.pause();
-      }).catch(err => console.log("Video unlock failed:", err));
+      const isMobile = window.innerWidth < 768;
+      if (isMobile) {
+        video.loop = true;
+        video.play().catch(err => console.log("Video unlock failed:", err));
+      } else {
+        video.play().then(() => {
+          video.pause();
+        }).catch(err => console.log("Video unlock failed:", err));
+      }
       window.removeEventListener("touchstart", unlockVideo);
       window.removeEventListener("click", unlockVideo);
     };
@@ -131,16 +144,21 @@ export default function CinematicScroll() {
       }
     });
 
-    // 1. Scrub virtual time instead of setting video currentTime directly to prevent decoder lag
-    const videoScrubber = { time: 0 };
-    tl.to(videoScrubber, {
-      time: video.duration - 0.05,
-      ease: "none",
-      duration: 60, // Refitted virtual timeline length
-      onUpdate: () => {
-        targetTimeRef.current = videoScrubber.time;
-      }
-    }, 0);
+    const isMobile = window.innerWidth < 768;
+
+    // Only scrub video on desktop. On mobile, the video plays continuously.
+    if (!isMobile) {
+      // 1. Scrub virtual time instead of setting video currentTime directly to prevent decoder lag
+      const videoScrubber = { time: 0 };
+      tl.to(videoScrubber, {
+        time: video.duration - 0.05,
+        ease: "none",
+        duration: 60, // Refitted virtual timeline length
+        onUpdate: () => {
+          targetTimeRef.current = videoScrubber.time;
+        }
+      }, 0);
+    }
 
     // 2. Sequence overlays animations using precise virtual timeline times
     // Step 0: Hero Panel fades out
@@ -176,23 +194,14 @@ export default function CinematicScroll() {
 
     // Seek-throttling requestAnimationFrame loop to ensure buttery-smooth scrubbing
     let rafId: number;
-    let lastUpdate = 0;
-    const throttleMs = 40; // Approx 25 FPS update rate for mobile seeking
-
-    const updateVideo = (now: number) => {
+    const updateVideo = () => {
       const vid = videoRef.current;
       if (vid && !isNaN(vid.duration)) {
-        const diff = targetTimeRef.current - vid.currentTime;
-        if (Math.abs(diff) > 0.01) {
-          const isMobile = window.innerWidth < 768;
-          if (isMobile) {
-            // Mobile: throttle seek rate to prevent UI lag
-            if (!vid.seeking && (now - lastUpdate > throttleMs)) {
-              vid.currentTime = targetTimeRef.current;
-              lastUpdate = now;
-            }
-          } else {
-            // Desktop: no throttle, just avoid seeker overlap
+        const isMobile = window.innerWidth < 768;
+        if (!isMobile) {
+          const diff = targetTimeRef.current - vid.currentTime;
+          if (Math.abs(diff) > 0.01) {
+            // Desktop: seek only if not already seeking
             if (!vid.seeking) {
               vid.currentTime = targetTimeRef.current;
             }
@@ -245,6 +254,8 @@ export default function CinematicScroll() {
             preload="auto"
             muted
             playsInline
+            autoPlay
+            loop
             onLoadedMetadata={handleMetadataLoaded}
             style={{ filter: "brightness(0.65) contrast(1.05) saturate(0.9)" }}
           />
