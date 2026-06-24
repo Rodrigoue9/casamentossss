@@ -1,10 +1,16 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence, useInView } from "framer-motion";
 import { Check, Heart, Loader2 } from "lucide-react";
 
-export default function RsvpForm() {
+interface RsvpFormProps {
+  guestId?: number | null;
+  guestName?: string;
+  guestMaxCompanions?: number;
+}
+
+export default function RsvpForm({ guestId = null, guestName = "", guestMaxCompanions = 0 }: RsvpFormProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(containerRef, { once: false, amount: 0.1 });
 
@@ -18,6 +24,16 @@ export default function RsvpForm() {
 
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState("");
+
+  // Sync dynamic guest name once it finishes loading
+  useEffect(() => {
+    if (guestName) {
+      setFormData((prev) => ({
+        ...prev,
+        nome: guestName,
+      }));
+    }
+  }, [guestName]);
 
   const formatPhone = (val: string) => {
     const numbers = val.replace(/\D/g, "");
@@ -35,14 +51,24 @@ export default function RsvpForm() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: name === "acompanhantes" 
-        ? parseInt(value) || 0 
-        : name === "telefone" 
-          ? formatPhone(value) 
-          : value,
-    }));
+    setFormData((prev) => {
+      let updatedVal: string | number = value;
+      if (name === "acompanhantes") {
+        const intVal = parseInt(value) || 0;
+        // Cap companion count if preregistered guest
+        if (guestId && intVal > guestMaxCompanions) {
+          updatedVal = guestMaxCompanions;
+        } else {
+          updatedVal = intVal;
+        }
+      } else if (name === "telefone") {
+        updatedVal = formatPhone(value);
+      }
+      return {
+        ...prev,
+        [name]: updatedVal,
+      };
+    });
   };
 
   const handlePresencaChange = (value: number) => {
@@ -61,13 +87,16 @@ export default function RsvpForm() {
     setErrorMessage("");
 
     try {
-      // Fetch post to local or relative API endpoint
+      // Send RSVP post data, including guestId if dynamic link was used
       const response = await fetch("/api/confirmar.php", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          ...formData,
+          id: guestId,
+        }),
       });
 
       const result = await response.json();
@@ -136,17 +165,25 @@ export default function RsvpForm() {
                 {/* Input: Nome */}
                 <div className="flex flex-col text-left">
                   <label className="text-[10px] uppercase tracking-wider text-[#d4c5e2]/70 font-semibold mb-2">
-                    Nome Completo
+                    {guestId ? "Convidado(a)" : "Nome Completo"}
                   </label>
                   <input
                     type="text"
                     name="nome"
                     value={formData.nome}
                     onChange={handleChange}
+                    readOnly={!!guestId}
                     placeholder="Seu nome completo"
-                    className="w-full px-4 py-3 bg-[#0f0b18]/60 border border-[#dfba53]/15 focus:border-[#dfba53] rounded-xl text-sm text-white placeholder-[#d4c5e2]/30 outline-none transition-colors"
+                    className={`w-full px-4 py-3 bg-[#0f0b18]/60 border border-[#dfba53]/15 focus:border-[#dfba53] rounded-xl text-sm text-white placeholder-[#d4c5e2]/30 outline-none transition-colors ${
+                      guestId ? "opacity-80 cursor-not-allowed border-[#dfba53]/30" : ""
+                    }`}
                     required
                   />
+                  {guestId && (
+                    <span className="text-[9px] text-[#dfba53]/70 font-serif italic mt-1">
+                      Convite exclusivo pré-identificado.
+                    </span>
+                  )}
                 </div>
 
                 {/* Input: Telefone */}
@@ -199,22 +236,52 @@ export default function RsvpForm() {
                   </div>
 
                   {/* Input: Acompanhantes */}
-                  <div className="flex flex-col text-left">
-                    <label className="text-[10px] uppercase tracking-wider text-[#d4c5e2]/70 font-semibold mb-2">
-                      Acompanhantes (Opcional)
-                    </label>
-                    <input
-                      type="number"
-                      name="acompanhantes"
-                      value={formData.acompanhantes || ""}
-                      onChange={handleChange}
-                      placeholder="0"
-                      min="0"
-                      max="10"
-                      className="w-full px-4 py-3 bg-[#0f0b18]/60 border border-[#dfba53]/15 focus:border-[#dfba53] rounded-xl text-sm text-white placeholder-[#d4c5e2]/30 outline-none transition-colors"
-                      disabled={formData.presenca === 0}
-                    />
-                  </div>
+                  {guestId ? (
+                    guestMaxCompanions === 0 ? (
+                      <div className="flex flex-col text-left justify-center min-h-[64px]">
+                        <label className="text-[10px] uppercase tracking-wider text-[#d4c5e2]/70 font-semibold mb-1">
+                          Acompanhantes
+                        </label>
+                        <span className="text-xs text-[#dfba53] font-serif italic">
+                          Este é um convite individual.
+                        </span>
+                      </div>
+                    ) : (
+                      <div className="flex flex-col text-left">
+                        <label className="text-[10px] uppercase tracking-wider text-[#d4c5e2]/70 font-semibold mb-2">
+                          Acompanhantes (Máx: {guestMaxCompanions})
+                        </label>
+                        <input
+                          type="number"
+                          name="acompanhantes"
+                          value={formData.acompanhantes || ""}
+                          onChange={handleChange}
+                          placeholder="0"
+                          min="0"
+                          max={guestMaxCompanions}
+                          className="w-full px-4 py-3 bg-[#0f0b18]/60 border border-[#dfba53]/15 focus:border-[#dfba53] rounded-xl text-sm text-white placeholder-[#d4c5e2]/30 outline-none transition-colors"
+                          disabled={formData.presenca === 0}
+                        />
+                      </div>
+                    )
+                  ) : (
+                    <div className="flex flex-col text-left">
+                      <label className="text-[10px] uppercase tracking-wider text-[#d4c5e2]/70 font-semibold mb-2">
+                        Acompanhantes (Opcional)
+                      </label>
+                      <input
+                        type="number"
+                        name="acompanhantes"
+                        value={formData.acompanhantes || ""}
+                        onChange={handleChange}
+                        placeholder="0"
+                        min="0"
+                        max="10"
+                        className="w-full px-4 py-3 bg-[#0f0b18]/60 border border-[#dfba53]/15 focus:border-[#dfba53] rounded-xl text-sm text-white placeholder-[#d4c5e2]/30 outline-none transition-colors"
+                        disabled={formData.presenca === 0}
+                      />
+                    </div>
+                  )}
                 </div>
 
                 {/* Input: Mensagem */}
@@ -228,7 +295,6 @@ export default function RsvpForm() {
                     onChange={handleChange}
                     placeholder="Deixe suas felicitações aqui..."
                     rows={4}
-                    className="w-full px-4 py-3 bg-[#0f0b18]/60 border border-[#dfba53]/15 focus:border-[#dfba53] rounded-xl text-sm text-white placeholder-[#d4c5e2]/30 outline-none transition-colors resize-none"
                   />
                 </div>
 

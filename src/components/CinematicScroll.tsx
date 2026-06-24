@@ -33,6 +33,28 @@ export default function CinematicScroll() {
   const [videoSrc, setVideoSrc] = useState<string>("");
   const [isVideoLoaded, setIsVideoLoaded] = useState(false);
 
+  const [guestName, setGuestName] = useState<string>("");
+  const [guestId, setGuestId] = useState<number | null>(null);
+  const [guestMaxCompanions, setGuestMaxCompanions] = useState<number>(0);
+
+  // Read guest slug on load to customize page content
+  useEffect(() => {
+    const searchParams = new URLSearchParams(window.location.search);
+    const slug = searchParams.get("p");
+    if (slug) {
+      fetch(`/api/obter_convidado.php?slug=${encodeURIComponent(slug)}`)
+        .then((res) => res.json())
+        .then((res) => {
+          if (res.success && res.data) {
+            setGuestName(res.data.nome);
+            setGuestId(res.data.id);
+            setGuestMaxCompanions(res.data.acompanhantes_max);
+          }
+        })
+        .catch((err) => console.error("Erro ao carregar convidado:", err));
+    }
+  }, []);
+
   // Address variables
   const ceremonyAddress = "Catedral Basílica de Salvador - Largo do Terreiro de Jesus, Centro Histórico, Salvador - BA";
   const receptionAddress = "Cerimonial Villa Cancione - Caminho das Árvores, Salvador - BA";
@@ -291,6 +313,21 @@ export default function CinematicScroll() {
           <span className="font-serif text-stroke-gold text-6xl md:text-[10rem] tracking-widest font-extralight opacity-10 select-none absolute transform -translate-y-20">
             RG
           </span>
+          {guestName && (
+            <motion.div 
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+              className="mb-4 text-center pointer-events-auto"
+            >
+              <span className="font-serif text-xl md:text-3xl text-[#dfba53] italic font-light">
+                Olá, {guestName}!
+              </span>
+              <p className="text-[9px] uppercase tracking-[0.2em] text-[#d4c5e2]/80 font-semibold mt-1">
+                Convidamos você para celebrar conosco
+              </p>
+            </motion.div>
+          )}
           <h2 className="font-serif text-4xl md:text-7xl text-white font-light tracking-wide drop-shadow-[0_4px_12px_rgba(15,11,24,0.4)] mb-4">
             Rodrigo <span className="text-[#dfba53] font-serif font-extralight italic">&</span> Gabrielle
           </h2>
@@ -485,7 +522,11 @@ export default function CinematicScroll() {
 
         {/* STEP 7: RSVP FORM */}
         <div ref={rsvpRef} className="gpu-accelerated absolute inset-0 w-full flex items-center justify-center">
-          <RsvpForm />
+          <RsvpForm 
+            guestId={guestId} 
+            guestName={guestName} 
+            guestMaxCompanions={guestMaxCompanions} 
+          />
         </div>
 
       </div>

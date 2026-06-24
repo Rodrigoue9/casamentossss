@@ -14,6 +14,9 @@ $db_name = 'sitecasamento';
 $db_user = 'root';
 $db_pass = '';
 
+// Admin Configuration
+$admin_password = 'rodrigogabrielle'; // Altere aqui para a senha do seu painel administrativo
+
 try {
     $pdo = new PDO("mysql:host=$db_host;dbname=$db_name;charset=utf8mb4", $db_user, $db_pass, [
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
