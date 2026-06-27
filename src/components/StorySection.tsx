@@ -57,7 +57,7 @@ export default function StorySection() {
   };
 
   const storyParagraph = 
-    "Tudo começou de uma forma simples, mas com o tempo percebemos que nada na nossa caminhada foi por acaso. Cada risada compartilhada, cada conversa de madrugada e cada obstáculo vencido nos mostrou que fomos feitos um para o outro. Nosso amor cresceu sob o olhar de Deus, fortalecendo nossa amizade e alimentando o sonho de compartilharmos a vida inteira lado a lado.";
+    "Tudo começou de uma forma simples, mas com o tempo percebemos que nada na nossa caminhada foi por acaso. Cada risada compartilhada, cada conversa de madrugada e cada obstáculo vencido nos mostrou que fomos feitos um para o outro. Nosso amor cresceu sob o olhar de Jeová, fortalecendo nossa amizade e alimentando o sonho de compartilharmos a vida inteira lado a lado.";
 
   return (
     <section className="relative w-full bg-[#0f0b18] py-24 md:py-40 overflow-hidden flex flex-col gap-32 md:gap-48 px-6">
@@ -87,7 +87,7 @@ export default function StorySection() {
             {/* The Image */}
             <div className="relative w-[300px] h-[400px] md:w-[400px] md:h-[500px] overflow-hidden rounded-sm bg-[#191127]">
               <Image
-                src="/images/ChatGPT Image 22 de jun. de 2026, 21_03_21.png"
+                src="images/ChatGPT Image 22 de jun. de 2026, 21_03_21.png"
                 alt="Rodrigo & Gabrielle"
                 fill
                 className="object-cover transition-transform duration-1000 group-hover:scale-105"
@@ -176,7 +176,7 @@ export default function StorySection() {
             transition={{ duration: 1.2, delay: 0.4 }}
             className="font-sans text-sm md:text-base leading-relaxed text-[#d4c5e2]/80"
           >
-            Embaixo de um céu estrelado, com o coração acelerado e a certeza de que Deus havia preparado aquele exato segundo, veio a pergunta mais importante de nossas vidas. A resposta fluiu com lágrimas de alegria e um sorriso inesquecível.
+            Embaixo de um céu estrelado, com o coração acelerado e a certeza de que Jeová havia preparado aquele exato segundo, veio a pergunta mais importante de nossas vidas. A resposta fluiu com lágrimas de alegria e um sorriso inesquecível.
           </motion.p>
 
           {/* Animated Draw-in Golden Line & "Ela disse sim" Text */}
@@ -237,7 +237,7 @@ export default function StorySection() {
 
             <div className="relative w-[300px] h-[400px] md:w-[400px] md:h-[500px] overflow-hidden rounded-sm bg-[#191127]">
               <Image
-                src="/images/ChatGPT Image 22 de jun. de 2026, 21_03_28.png"
+                src="images/ChatGPT Image 22 de jun. de 2026, 21_03_28.png"
                 alt="O Pedido"
                 fill
                 className="object-cover transition-transform duration-1000 group-hover:scale-105"

@@ -12,7 +12,19 @@ import RsvpForm from "./RsvpForm";
 
 gsap.registerPlugin(ScrollTrigger);
 
-export default function CinematicScroll() {
+interface CinematicScrollProps {
+  guestName?: string;
+  guestId?: number | null;
+  guestMaxCompanions?: number;
+  divineTerm?: string;
+}
+
+export default function CinematicScroll({
+  guestName = "",
+  guestId = null,
+  guestMaxCompanions = 0,
+  divineTerm = "Jeová",
+}: CinematicScrollProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const targetTimeRef = useRef(0);
@@ -33,31 +45,9 @@ export default function CinematicScroll() {
   const [videoSrc, setVideoSrc] = useState<string>("");
   const [isVideoLoaded, setIsVideoLoaded] = useState(false);
 
-  const [guestName, setGuestName] = useState<string>("");
-  const [guestId, setGuestId] = useState<number | null>(null);
-  const [guestMaxCompanions, setGuestMaxCompanions] = useState<number>(0);
-
-  // Read guest slug on load to customize page content
-  useEffect(() => {
-    const searchParams = new URLSearchParams(window.location.search);
-    const slug = searchParams.get("p");
-    if (slug) {
-      fetch(`/api/obter_convidado.php?slug=${encodeURIComponent(slug)}`)
-        .then((res) => res.json())
-        .then((res) => {
-          if (res.success && res.data) {
-            setGuestName(res.data.nome);
-            setGuestId(res.data.id);
-            setGuestMaxCompanions(res.data.acompanhantes_max);
-          }
-        })
-        .catch((err) => console.error("Erro ao carregar convidado:", err));
-    }
-  }, []);
-
   // Address variables
-  const ceremonyAddress = "Catedral Basílica de Salvador - Largo do Terreiro de Jesus, Centro Histórico, Salvador - BA";
-  const receptionAddress = "Cerimonial Villa Cancione - Caminho das Árvores, Salvador - BA";
+  const ceremonyAddress = "R. São Cristóvão, 472 - Jardim Tropical, Lauro de Freitas - BA, 42700-000";
+  const receptionAddress = "R. São Cristóvão, 472 - Jardim Tropical, Lauro de Freitas - BA, 42700-000";
 
   const handleOpenMap = (address: string) => {
     window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`, "_blank");
@@ -68,8 +58,8 @@ export default function CinematicScroll() {
     const handleResize = () => {
       const isMobile = window.innerWidth < 768;
       const newSrc = isMobile
-        ? "/videos/Cena_inicial_Celular.mp4"
-        : "/videos/Cena_inicial_Pc.mp4";
+        ? "videos/Cena_inicial_Celular.mp4"
+        : "videos/Cena_inicial_Pc.mp4";
       
       if (videoSrc !== newSrc) {
         setVideoSrc(newSrc);
@@ -130,7 +120,7 @@ export default function CinematicScroll() {
     if (!video || !container || !videoSrc || !isVideoLoaded) return;
     if (isNaN(video.duration) || video.duration === 0) return;
 
-    // Reset defaults for all panels
+    // Reset defaults for all panels using autoAlpha (opacity + visibility)
     gsap.set([
       historyRef.current,
       proposalRef.current,
@@ -139,7 +129,7 @@ export default function CinematicScroll() {
       receptionRef.current,
       giftsRef.current,
       rsvpRef.current
-    ], { opacity: 0, y: 50, pointerEvents: "none" });
+    ], { autoAlpha: 0, y: 50 });
 
     // Single unified ScrollTrigger timeline
     const tl = gsap.timeline({
@@ -167,35 +157,35 @@ export default function CinematicScroll() {
 
     // 2. Sequence overlays animations using precise virtual timeline times
     // Step 0: Hero Panel fades out
-    tl.to(heroRef.current, { opacity: 0, y: -50, pointerEvents: "none", duration: 2 }, 0.5);
+    tl.to(heroRef.current, { autoAlpha: 0, y: -50, duration: 2 }, 0.5);
       
     // Step 1: Nossa História fades in, stays, then fades out
-    tl.to(historyRef.current, { opacity: 1, y: 0, pointerEvents: "auto", duration: 2 }, 4.5)
-      .to(historyRef.current, { opacity: 0, y: -50, pointerEvents: "none", duration: 2 }, 9.5);
+    tl.to(historyRef.current, { autoAlpha: 1, y: 0, duration: 2 }, 4.5)
+      .to(historyRef.current, { autoAlpha: 0, y: -50, duration: 2 }, 9.5);
       
     // Step 2: O Pedido fades in, line draws, then fades out
-    tl.to(proposalRef.current, { opacity: 1, y: 0, pointerEvents: "auto", duration: 2 }, 12.5)
+    tl.to(proposalRef.current, { autoAlpha: 1, y: 0, duration: 2 }, 12.5)
       .fromTo(lineRef.current, { strokeDashoffset: 1000 }, { strokeDashoffset: 0, duration: 2 }, 13.5)
-      .to(proposalRef.current, { opacity: 0, y: -50, pointerEvents: "none", duration: 2 }, 18.5);
+      .to(proposalRef.current, { autoAlpha: 0, y: -50, duration: 2 }, 18.5);
       
     // Step 3: Countdown fades in, stays, then fades out
-    tl.to(countdownRef.current, { opacity: 1, y: 0, pointerEvents: "auto", duration: 2 }, 21.5)
-      .to(countdownRef.current, { opacity: 0, y: -50, pointerEvents: "none", duration: 2 }, 26.5);
+    tl.to(countdownRef.current, { autoAlpha: 1, y: 0, duration: 2 }, 21.5)
+      .to(countdownRef.current, { autoAlpha: 0, y: -50, duration: 2 }, 26.5);
       
     // Step 4: Cerimônia card fades in, stays, then fades out
-    tl.to(ceremonyRef.current, { opacity: 1, y: 0, pointerEvents: "auto", duration: 2 }, 29.5)
-      .to(ceremonyRef.current, { opacity: 0, y: -50, pointerEvents: "none", duration: 2 }, 34.5);
+    tl.to(ceremonyRef.current, { autoAlpha: 1, y: 0, duration: 2 }, 29.5)
+      .to(ceremonyRef.current, { autoAlpha: 0, y: -50, duration: 2 }, 34.5);
       
     // Step 5: Recepção card fades in, stays, then fades out
-    tl.to(receptionRef.current, { opacity: 1, y: 0, pointerEvents: "auto", duration: 2 }, 37.5)
-      .to(receptionRef.current, { opacity: 0, y: -50, pointerEvents: "none", duration: 2 }, 42.5);
+    tl.to(receptionRef.current, { autoAlpha: 1, y: 0, duration: 2 }, 37.5)
+      .to(receptionRef.current, { autoAlpha: 0, y: -50, duration: 2 }, 42.5);
       
     // Step 6: Lista de Presentes fades in, stays, then fades out
-    tl.to(giftsRef.current, { opacity: 1, y: 0, pointerEvents: "auto", duration: 2 }, 45.5)
-      .to(giftsRef.current, { opacity: 0, y: -50, pointerEvents: "none", duration: 2 }, 50.5);
+    tl.to(giftsRef.current, { autoAlpha: 1, y: 0, duration: 2 }, 45.5)
+      .to(giftsRef.current, { autoAlpha: 0, y: -50, duration: 2 }, 50.5);
       
     // Step 7: RSVP Form fades in and stays interactive
-    tl.to(rsvpRef.current, { opacity: 1, y: 0, pointerEvents: "auto", duration: 2 }, 53.5);
+    tl.to(rsvpRef.current, { autoAlpha: 1, y: 0, duration: 2 }, 53.5);
 
     // Seek-throttling requestAnimationFrame loop to ensure buttery-smooth scrubbing
     let rafId: number;
@@ -333,7 +323,7 @@ export default function CinematicScroll() {
           </h2>
           <div className="w-12 h-[1px] bg-[#dfba53]/50 my-3" />
           <p className="font-sans text-[10px] md:text-xs uppercase tracking-[0.35em] text-[#d4c5e2] font-semibold mb-6">
-            Uma história de amor escrita por Deus
+            Uma história de amor escrita por {divineTerm}
           </p>
           <button
             onClick={handleNavigateToRsvp}
@@ -347,14 +337,15 @@ export default function CinematicScroll() {
         {/* STEP 1: NOSSA HISTÓRIA */}
         <div
           ref={historyRef}
-          className="gpu-accelerated absolute max-w-5xl w-full grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-8 md:gap-16 items-center px-6 sm:px-8"
+          style={{ opacity: 0, visibility: "hidden" }}
+          className="gpu-accelerated absolute max-w-5xl w-full grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-8 md:gap-16 items-center px-6 sm:px-8 pointer-events-auto"
         >
           {/* Frame Image */}
           <div className="relative flex justify-center order-2 md:order-1">
             <div className="relative p-2 bg-gradient-to-tr from-[#dfba53]/40 via-[#eae3f1]/10 to-[#dfba53]/40 rounded-sm shadow-[0_8px_30px_rgba(15,11,24,0.6)]">
               <div className="relative w-[150px] h-[190px] sm:w-[220px] sm:h-[280px] md:w-[280px] md:h-[360px] overflow-hidden rounded-sm bg-[#191127]">
                 <Image
-                  src="/images/ChatGPT Image 22 de jun. de 2026, 21_03_21.png"
+                  src="images/ChatGPT Image 22 de jun. de 2026, 21_03_21.png"
                   alt="Nossa História"
                   fill
                   className="object-cover"
@@ -374,7 +365,7 @@ export default function CinematicScroll() {
             <h3 className="font-serif text-3xl md:text-4xl text-white font-light">Nossa História</h3>
             <div className="w-10 h-[1px] bg-[#dfba53] my-1" />
             <p className="font-sans text-xs md:text-sm leading-relaxed text-[#d4c5e2]/85 max-w-md">
-              Tudo começou de uma forma simples, mas com o tempo percebemos que nada na nossa caminhada foi por acaso. Cada risada compartilhada, cada conversa de madrugada e cada obstáculo vencido nos mostrou que fomos feitos um para o outro. Nosso amor cresceu sob o olhar de Deus, fortalecendo nossa amizade e o sonho de uma vida inteira juntos.
+              Tudo começou de uma forma simples, mas com o tempo percebemos que nada na nossa caminhada foi por acaso. Cada risada compartilhada, cada conversa de madrugada e cada obstáculo vencido nos mostrou que fomos feitos um para o outro. Nosso amor cresceu sob o olhar de {divineTerm}, fortalecendo nossa amizade e o sonho de uma vida inteira juntos.
             </p>
           </div>
         </div>
@@ -382,7 +373,8 @@ export default function CinematicScroll() {
         {/* STEP 2: O PEDIDO */}
         <div
           ref={proposalRef}
-          className="gpu-accelerated absolute max-w-5xl w-full grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-8 md:gap-16 items-center px-6 sm:px-8"
+          style={{ opacity: 0, visibility: "hidden" }}
+          className="gpu-accelerated absolute max-w-5xl w-full grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-8 md:gap-16 items-center px-6 sm:px-8 pointer-events-auto"
         >
           {/* Narrativa */}
           <div className="flex flex-col gap-4 text-left">
@@ -390,7 +382,7 @@ export default function CinematicScroll() {
             <h3 className="font-serif text-3xl md:text-4xl text-white font-light">O Pedido</h3>
             <div className="w-10 h-[1px] bg-[#dfba53] my-1" />
             <p className="font-sans text-xs md:text-sm leading-relaxed text-[#d4c5e2]/85 max-w-md">
-              Embaixo de um céu estrelado, com a certeza de que Deus havia preparado aquele exato segundo, veio a pergunta mais importante de nossas vidas. A resposta fluiu com lágrimas de alegria e um sorriso inesquecível.
+              Embaixo de um céu estrelado, com a certeza de que {divineTerm} havia preparado aquele exato segundo, veio a pergunta mais importante de nossas vidas. A resposta fluiu com lágrimas de alegria e um sorriso inesquecível.
             </p>
             {/* SVG line and "Ela disse sim" */}
             <div className="relative mt-2 flex flex-col gap-2">
@@ -414,7 +406,7 @@ export default function CinematicScroll() {
             <div className="relative p-2 bg-gradient-to-tr from-[#eae3f1]/10 via-[#dfba53]/40 to-[#eae3f1]/10 rounded-sm shadow-[0_8px_30px_rgba(15,11,24,0.6)]">
               <div className="relative w-[150px] h-[190px] sm:w-[220px] sm:h-[280px] md:w-[280px] md:h-[360px] overflow-hidden rounded-sm bg-[#191127]">
                 <Image
-                  src="/images/ChatGPT Image 22 de jun. de 2026, 21_03_28.png"
+                  src="images/ChatGPT Image 22 de jun. de 2026, 21_03_28.png"
                   alt="O Pedido"
                   fill
                   className="object-cover"
@@ -431,12 +423,12 @@ export default function CinematicScroll() {
         </div>
 
         {/* STEP 3: CONTAGEM REGRESSIVA */}
-        <div ref={countdownRef} className="gpu-accelerated absolute inset-0 w-full flex items-center justify-center">
-          <Countdown />
+        <div ref={countdownRef} style={{ opacity: 0, visibility: "hidden" }} className="gpu-accelerated absolute inset-0 w-full flex items-center justify-center pointer-events-auto">
+          <Countdown divineTerm={divineTerm} />
         </div>
 
         {/* STEP 4: CERIMÔNIA */}
-        <div ref={ceremonyRef} className="gpu-accelerated absolute inset-0 flex items-center justify-center px-6">
+        <div ref={ceremonyRef} style={{ opacity: 0, visibility: "hidden" }} className="gpu-accelerated absolute inset-0 flex items-center justify-center px-6 pointer-events-auto">
           <div className="glassmorphism rounded-3xl p-5 sm:p-8 md:p-10 flex flex-col items-center justify-between text-center relative max-w-md w-full border border-[#dfba53]/20 shadow-[0_12px_40px_rgba(15,11,24,0.5)]">
             <span className="text-[#dfba53] text-[9px] uppercase tracking-[0.25em] font-semibold block mb-1">04 . A União</span>
             <h3 className="font-serif text-2xl md:text-3xl text-white font-light mb-4 tracking-wide">A Cerimônia</h3>
@@ -454,14 +446,14 @@ export default function CinematicScroll() {
                 <div className="p-2 rounded-full bg-[#dfba53]/15 text-[#dfba53] mt-0.5"><Clock size={15} /></div>
                 <div>
                   <span className="text-[9px] uppercase tracking-wider text-[#d4c5e2]/60 font-semibold block">Horário</span>
-                  <span className="font-serif text-sm text-white tracking-wide">Às 17:00 Horas</span>
+                  <span className="font-serif text-sm text-white tracking-wide">Às 12:30 Horas</span>
                 </div>
               </div>
               <div className="flex items-start gap-3">
                 <div className="p-2 rounded-full bg-[#dfba53]/15 text-[#dfba53] mt-0.5"><MapPin size={15} /></div>
                 <div>
                   <span className="text-[9px] uppercase tracking-wider text-[#d4c5e2]/60 font-semibold block">Local</span>
-                  <span className="font-serif text-sm text-white tracking-wide">Catedral Basílica de Salvador</span>
+                  <span className="font-serif text-sm text-white tracking-wide">Lauro de Freitas - BA</span>
                   <p className="text-[11px] text-[#eae3f1]/65 mt-0.5 leading-relaxed">{ceremonyAddress}</p>
                 </div>
               </div>
@@ -476,7 +468,7 @@ export default function CinematicScroll() {
         </div>
 
         {/* STEP 5: RECEPÇÃO */}
-        <div ref={receptionRef} className="gpu-accelerated absolute inset-0 flex items-center justify-center px-6">
+        <div ref={receptionRef} style={{ opacity: 0, visibility: "hidden" }} className="gpu-accelerated absolute inset-0 flex items-center justify-center px-6 pointer-events-auto">
           <div className="glassmorphism rounded-3xl p-5 sm:p-8 md:p-10 flex flex-col items-center justify-between text-center relative max-w-md w-full border border-[#dfba53]/20 shadow-[0_12px_40px_rgba(15,11,24,0.5)]">
             <span className="text-[#dfba53] text-[9px] uppercase tracking-[0.25em] font-semibold block mb-1">05 . A Celebração</span>
             <h3 className="font-serif text-2xl md:text-3xl text-white font-light mb-4 tracking-wide">A Recepção</h3>
@@ -501,7 +493,7 @@ export default function CinematicScroll() {
                 <div className="p-2 rounded-full bg-[#dfba53]/15 text-[#dfba53] mt-0.5"><MapPin size={15} /></div>
                 <div>
                   <span className="text-[9px] uppercase tracking-wider text-[#d4c5e2]/60 font-semibold block">Local</span>
-                  <span className="font-serif text-sm text-white tracking-wide">Cerimonial Villa Cancione</span>
+                  <span className="font-serif text-sm text-white tracking-wide">Mesmo Local (Lauro de Freitas - BA)</span>
                   <p className="text-[11px] text-[#eae3f1]/65 mt-0.5 leading-relaxed">{receptionAddress}</p>
                 </div>
               </div>
@@ -516,12 +508,12 @@ export default function CinematicScroll() {
         </div>
 
         {/* STEP 6: LISTA DE PRESENTES */}
-        <div ref={giftsRef} className="gpu-accelerated absolute inset-0 w-full flex items-center justify-center">
-          <GiftList />
+        <div ref={giftsRef} style={{ opacity: 0, visibility: "hidden" }} className="gpu-accelerated absolute inset-0 w-full flex items-center justify-center pointer-events-auto">
+          <GiftList guestId={guestId} />
         </div>
 
         {/* STEP 7: RSVP FORM */}
-        <div ref={rsvpRef} className="gpu-accelerated absolute inset-0 w-full flex items-center justify-center">
+        <div ref={rsvpRef} style={{ opacity: 0, visibility: "hidden" }} className="gpu-accelerated absolute inset-0 w-full flex items-center justify-center pointer-events-auto">
           <RsvpForm 
             guestId={guestId} 
             guestName={guestName} 

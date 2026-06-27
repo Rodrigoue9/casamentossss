@@ -88,7 +88,7 @@ export default function RsvpForm({ guestId = null, guestName = "", guestMaxCompa
 
     try {
       // Send RSVP post data, including guestId if dynamic link was used
-      const response = await fetch("/api/confirmar.php", {
+      const response = await fetch("api/confirmar.php", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -158,9 +158,14 @@ export default function RsvpForm({ guestId = null, guestName = "", guestMaxCompa
                 className="flex flex-col gap-6"
               >
                 {/* Form header message */}
-                <p className="text-xs text-[#d4c5e2]/80 text-center leading-relaxed mb-2">
-                  Por favor, confirme sua presença até o dia <b>13 de Agosto de 2026</b> para que possamos planejar tudo com muito carinho.
-                </p>
+                <div className="text-xs text-[#d4c5e2]/85 text-center leading-relaxed mb-4 flex flex-col gap-2">
+                  <p>
+                    Por favor, confirme sua presença até o dia <b>13 de Agosto de 2026</b> para que possamos planejar tudo com muito carinho.
+                  </p>
+                  <p className="text-[#dfba53] font-medium">
+                    Caso não possa comparecer pessoalmente, preencha o formulário marcando <b>"Não poderei"</b>. Nós enviaremos um link do <b>Zoom</b> para que você assista à cerimônia online e compartilhe esse momento especial conosco!
+                  </p>
+                </div>
 
                 {/* Input: Nome */}
                 <div className="flex flex-col text-left">
@@ -202,86 +207,35 @@ export default function RsvpForm({ guestId = null, guestName = "", guestMaxCompa
                   />
                 </div>
 
-                {/* Grid: Acompanhantes & Presenca */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {/* Presence Radio Buttons */}
-                  <div className="flex flex-col text-left">
-                    <label className="text-[10px] uppercase tracking-wider text-[#d4c5e2]/70 font-semibold mb-2">
-                      Você comparecerá?
-                    </label>
-                    <div className="flex gap-4">
-                      <button
-                        type="button"
-                        onClick={() => handlePresencaChange(1)}
-                        className={`flex-1 py-2.5 rounded-xl border text-xs font-semibold uppercase tracking-wider transition-all pointer-events-auto ${
-                          formData.presenca === 1
-                            ? "bg-[#dfba53] text-[#0f0b18] border-[#dfba53]"
-                            : "bg-[#0f0b18]/40 text-[#d4c5e2]/80 border-[#dfba53]/20 hover:border-[#dfba53]/40"
-                        }`}
-                      >
-                        Sim, vou!
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => handlePresencaChange(0)}
-                        className={`flex-1 py-2.5 rounded-xl border text-xs font-semibold uppercase tracking-wider transition-all pointer-events-auto ${
-                          formData.presenca === 0
-                            ? "bg-[#7a5c96] text-white border-[#7a5c96]"
-                            : "bg-[#0f0b18]/40 text-[#d4c5e2]/80 border-[#dfba53]/20 hover:border-[#dfba53]/40"
-                        }`}
-                      >
-                        Não poderei
-                      </button>
-                    </div>
+                {/* Presence Radio Buttons */}
+                <div className="flex flex-col text-left">
+                  <label className="text-[10px] uppercase tracking-wider text-[#d4c5e2]/70 font-semibold mb-2">
+                    Você comparecerá?
+                  </label>
+                  <div className="flex gap-4">
+                    <button
+                      type="button"
+                      onClick={() => handlePresencaChange(1)}
+                      className={`flex-1 py-2.5 rounded-xl border text-xs font-semibold uppercase tracking-wider transition-all pointer-events-auto ${
+                        formData.presenca === 1
+                          ? "bg-[#dfba53] text-[#0f0b18] border-[#dfba53]"
+                          : "bg-[#0f0b18]/40 text-[#d4c5e2]/80 border-[#dfba53]/20 hover:border-[#dfba53]/40"
+                      }`}
+                    >
+                      Sim, vou!
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handlePresencaChange(0)}
+                      className={`flex-1 py-2.5 rounded-xl border text-xs font-semibold uppercase tracking-wider transition-all pointer-events-auto ${
+                        formData.presenca === 0
+                          ? "bg-[#7a5c96] text-white border-[#7a5c96]"
+                          : "bg-[#0f0b18]/40 text-[#d4c5e2]/80 border-[#dfba53]/20 hover:border-[#dfba53]/40"
+                      }`}
+                    >
+                      Não poderei
+                    </button>
                   </div>
-
-                  {/* Input: Acompanhantes */}
-                  {guestId ? (
-                    guestMaxCompanions === 0 ? (
-                      <div className="flex flex-col text-left justify-center min-h-[64px]">
-                        <label className="text-[10px] uppercase tracking-wider text-[#d4c5e2]/70 font-semibold mb-1">
-                          Acompanhantes
-                        </label>
-                        <span className="text-xs text-[#dfba53] font-serif italic">
-                          Este é um convite individual.
-                        </span>
-                      </div>
-                    ) : (
-                      <div className="flex flex-col text-left">
-                        <label className="text-[10px] uppercase tracking-wider text-[#d4c5e2]/70 font-semibold mb-2">
-                          Acompanhantes (Máx: {guestMaxCompanions})
-                        </label>
-                        <input
-                          type="number"
-                          name="acompanhantes"
-                          value={formData.acompanhantes || ""}
-                          onChange={handleChange}
-                          placeholder="0"
-                          min="0"
-                          max={guestMaxCompanions}
-                          className="w-full px-4 py-3 bg-[#0f0b18]/60 border border-[#dfba53]/15 focus:border-[#dfba53] rounded-xl text-sm text-white placeholder-[#d4c5e2]/30 outline-none transition-colors"
-                          disabled={formData.presenca === 0}
-                        />
-                      </div>
-                    )
-                  ) : (
-                    <div className="flex flex-col text-left">
-                      <label className="text-[10px] uppercase tracking-wider text-[#d4c5e2]/70 font-semibold mb-2">
-                        Acompanhantes (Opcional)
-                      </label>
-                      <input
-                        type="number"
-                        name="acompanhantes"
-                        value={formData.acompanhantes || ""}
-                        onChange={handleChange}
-                        placeholder="0"
-                        min="0"
-                        max="10"
-                        className="w-full px-4 py-3 bg-[#0f0b18]/60 border border-[#dfba53]/15 focus:border-[#dfba53] rounded-xl text-sm text-white placeholder-[#d4c5e2]/30 outline-none transition-colors"
-                        disabled={formData.presenca === 0}
-                      />
-                    </div>
-                  )}
                 </div>
 
                 {/* Input: Mensagem */}
@@ -355,7 +309,7 @@ export default function RsvpForm({ guestId = null, guestName = "", guestMaxCompa
                 <p className="text-sm text-[#eae3f1]/80 max-w-sm leading-relaxed mb-6 font-sans">
                   {formData.presenca === 1
                     ? "Sua confirmação foi registrada com sucesso. Estamos imensamente felizes por você fazer parte deste momento único em nossas vidas!"
-                    : "Sua mensagem foi enviada. Sentiremos sua falta, mas agradecemos imensamente o seu carinho e as suas felicitações."}
+                    : "Recebemos sua resposta. Sentiremos sua falta presencialmente, mas fique tranquilo(a): enviaremos o link do Zoom para você nos acompanhar online. Agradecemos o seu carinho!"}
                 </p>
 
                 <div className="w-12 h-[1px] bg-[#dfba53]/40 my-3" />

@@ -23,8 +23,8 @@ export default function HeroVideo() {
     const handleResize = () => {
       const isMobile = window.innerWidth < 768;
       const newSrc = isMobile
-        ? "/videos/Cena_inicial_Celular.mp4"
-        : "/videos/Cena_inicial_Pc.mp4";
+        ? "videos/Cena_inicial_Celular.mp4"
+        : "videos/Cena_inicial_Pc.mp4";
       
       if (videoSrc !== newSrc) {
         setVideoSrc(newSrc);
@@ -214,7 +214,7 @@ export default function HeroVideo() {
         <div className="w-16 h-[1px] bg-[#dfba53]/50 my-4" />
 
         <p className="font-sans text-xs md:text-sm uppercase tracking-[0.35em] text-[#d4c5e2] font-semibold mb-6">
-          Uma história de amor escrita por Deus
+          Uma história de amor escrita por Jeová
         </p>
 
         <button

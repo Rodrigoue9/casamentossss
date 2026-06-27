@@ -14,7 +14,7 @@ if (empty($slug)) {
 }
 
 try {
-    $stmt = $pdo->prepare("SELECT id, nome, slug, acompanhantes_max, presenca, acompanhantes, mensagem, telefone FROM convidados WHERE slug = :slug");
+    $stmt = $pdo->prepare("SELECT id, nome, slug, acompanhantes_max, tratamento, presenca, acompanhantes, mensagem, telefone FROM convidados WHERE slug = :slug");
     $stmt->execute(['slug' => $slug]);
     $convidado = $stmt->fetch();
 

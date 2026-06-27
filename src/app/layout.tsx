@@ -16,7 +16,7 @@ const montserrat = Montserrat({
 
 export const metadata: Metadata = {
   title: "Rodrigo & Gabrielle | Nosso Casamento",
-  description: "Uma história de amor escrita por Deus. Confirme sua presença em nosso casamento.",
+  description: "Uma história de amor escrita por Jeová. Confirme sua presença em nosso casamento.",
 };
 
 export default function RootLayout({

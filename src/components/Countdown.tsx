@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { motion, useInView } from "framer-motion";
 import { Heart } from "lucide-react";
 
-export default function Countdown() {
+export default function Countdown({ divineTerm = "Jeová" }: { divineTerm?: string }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const isInView = useInView(containerRef, { once: false, amount: 0.1 });
@@ -19,7 +19,7 @@ export default function Countdown() {
 
   // Target date: September 13, 2026
   useEffect(() => {
-    const targetDate = new Date("2026-09-13T17:00:00-03:00").getTime(); // 17:00 Salvador time
+    const targetDate = new Date("2026-09-13T12:30:00-03:00").getTime(); // 12:30 Lauro de Freitas time
 
     const updateTimer = () => {
       const now = new Date().getTime();
@@ -282,7 +282,7 @@ export default function Countdown() {
               <Heart size={32} className="text-[#dfba53] fill-[#dfba53]/20 mx-auto mb-4 animate-pulse" />
               <h3 className="font-serif text-2xl md:text-3xl text-white font-light mb-2">Chegou o Grande Dia!</h3>
               <p className="text-xs md:text-sm text-[#d4c5e2]/80 leading-relaxed font-sans">
-                Hoje celebramos o amor e o início de uma nova história sob a bênção de Deus. Agradecemos a todos que compartilham desse sonho conosco!
+                Hoje celebramos o amor e o início de uma nova história sob a bênção de {divineTerm}. Agradecemos a todos que compartilham desse sonho conosco!
               </p>
             </motion.div>
           )}
@@ -295,7 +295,7 @@ export default function Countdown() {
           transition={{ duration: 1.2, delay: 0.8 }}
           className="text-[#d4c5e2] text-xs font-serif italic tracking-wide mt-10"
         >
-          Para o início de uma vida inteira juntos. Salvador, BA — 13.09.2026.
+          Para o início de uma vida inteira juntos. Lauro de Freitas, BA — 13.09.2026.
         </motion.p>
       </div>
     </div>

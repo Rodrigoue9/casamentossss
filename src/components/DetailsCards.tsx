@@ -8,8 +8,8 @@ export default function DetailsCards() {
   const containerRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(containerRef, { once: false, amount: 0.1 });
 
-  const ceremonyAddress = "Catedral Basílica de Salvador - Largo do Terreiro de Jesus, Centro Histórico, Salvador - BA";
-  const receptionAddress = "Cerimonial Villa Cancione - Caminho das Árvores, Salvador - BA";
+  const ceremonyAddress = "R. São Cristóvão, 472 - Jardim Tropical, Lauro de Freitas - BA, 42700-000";
+  const receptionAddress = "R. São Cristóvão, 472 - Jardim Tropical, Lauro de Freitas - BA, 42700-000";
 
   const handleOpenMap = (address: string) => {
     window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`, "_blank");
@@ -84,7 +84,7 @@ export default function DetailsCards() {
                   </div>
                   <div>
                     <span className="text-[10px] uppercase tracking-wider text-[#d4c5e2]/60 font-semibold block">Horário</span>
-                    <span className="font-serif text-base text-white tracking-wide">Às 17:00 Horas</span>
+                    <span className="font-serif text-base text-white tracking-wide">Às 12:30 Horas</span>
                   </div>
                 </div>
 
@@ -95,7 +95,7 @@ export default function DetailsCards() {
                   </div>
                   <div>
                     <span className="text-[10px] uppercase tracking-wider text-[#d4c5e2]/60 font-semibold block">Local</span>
-                    <span className="font-serif text-base text-white tracking-wide">Catedral Basílica de Salvador</span>
+                    <span className="font-serif text-base text-white tracking-wide">Lauro de Freitas - BA</span>
                     <p className="text-xs text-[#eae3f1]/65 mt-1 leading-relaxed">{ceremonyAddress}</p>
                   </div>
                 </div>
@@ -159,7 +159,7 @@ export default function DetailsCards() {
                   </div>
                   <div>
                     <span className="text-[10px] uppercase tracking-wider text-[#d4c5e2]/60 font-semibold block">Local</span>
-                    <span className="font-serif text-base text-white tracking-wide">Villa Cancione</span>
+                    <span className="font-serif text-base text-white tracking-wide">Mesmo Local (Lauro de Freitas - BA)</span>
                     <p className="text-xs text-[#eae3f1]/65 mt-1 leading-relaxed">{receptionAddress}</p>
                   </div>
                 </div>

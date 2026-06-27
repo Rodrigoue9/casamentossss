@@ -6,8 +6,8 @@ import { useTexture } from "@react-three/drei";
 import * as THREE from "three";
 
 // Preload gallery textures to avoid performance hiccups when component is shown
-useTexture.preload("/images/ChatGPT Image 22 de jun. de 2026, 21_03_28.png");
-useTexture.preload("/images/ChatGPT Image 22 de jun. de 2026, 21_03_21.png");
+useTexture.preload("images/ChatGPT Image 22 de jun. de 2026, 21_03_28.png");
+useTexture.preload("images/ChatGPT Image 22 de jun. de 2026, 21_03_21.png");
 
 // Individual Floating Photo Card Component
 function PhotoCard({
@@ -143,13 +143,13 @@ export default function GalleryCanvas() {
   const cardsData: { url: string; pos: [number, number, number]; rot: [number, number, number]; scale?: [number, number, number] }[] = isMobile
     ? [
         {
-          url: "/images/ChatGPT Image 22 de jun. de 2026, 21_03_28.png",
+          url: "images/ChatGPT Image 22 de jun. de 2026, 21_03_28.png",
           pos: [0, 1.2, 0],
           rot: [0, 0, 0],
           scale: [1.8, 2.4, 1],
         },
         {
-          url: "/images/ChatGPT Image 22 de jun. de 2026, 21_03_21.png",
+          url: "images/ChatGPT Image 22 de jun. de 2026, 21_03_21.png",
           pos: [0, -1.2, 0.5],
           rot: [0, 0.05, 0.02],
           scale: [1.8, 2.4, 1],
@@ -157,19 +157,19 @@ export default function GalleryCanvas() {
       ]
     : [
         {
-          url: "/images/ChatGPT Image 22 de jun. de 2026, 21_03_28.png",
+          url: "images/ChatGPT Image 22 de jun. de 2026, 21_03_28.png",
           pos: [-2.2, 0, 0],
           rot: [0.02, 0.15, -0.05],
           scale: [2.2, 3, 1],
         },
         {
-          url: "/images/ChatGPT Image 22 de jun. de 2026, 21_03_21.png",
+          url: "images/ChatGPT Image 22 de jun. de 2026, 21_03_21.png",
           pos: [2.2, 0.3, 0.2],
           rot: [-0.02, -0.15, 0.05],
           scale: [2.2, 3, 1],
         },
         {
-          url: "/images/ChatGPT Image 22 de jun. de 2026, 21_03_28.png",
+          url: "images/ChatGPT Image 22 de jun. de 2026, 21_03_28.png",
           pos: [0, -0.2, 0.5],
           rot: [0, 0, 0],
           scale: [2.4, 3.2, 1],

@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
-export default function IntroLoader({ onComplete }: { onComplete: () => void }) {
+export default function IntroLoader({ divineTerm = "Jeová", onComplete }: { divineTerm?: string; onComplete: () => void }) {
   const [isDone, setIsDone] = useState(false);
   const [particles, setParticles] = useState<any[]>([]);
 
@@ -46,7 +46,7 @@ export default function IntroLoader({ onComplete }: { onComplete: () => void }) 
           className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#fcfbfa] bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-[#ffffff] via-[#faf8f5] to-[#f2ece2] overflow-hidden"
         >
           {/* Subtle elegant silk texture or background overlay */}
-          <div className="absolute inset-0 bg-cover opacity-[0.03] pointer-events-none" style={{ backgroundImage: "url('/images/ChatGPT Image 22 de jun. de 2026, 21_03_21.png')" }} />
+          <div className="absolute inset-0 bg-cover opacity-[0.03] pointer-events-none" style={{ backgroundImage: "url('images/ChatGPT Image 22 de jun. de 2026, 21_03_21.png')" }} />
 
           {/* Shimmering particles */}
           {particles.map((p) => (
@@ -182,7 +182,7 @@ export default function IntroLoader({ onComplete }: { onComplete: () => void }) 
               transition={{ duration: 2, ease: "easeOut", delay: 2.5 }}
               className="font-sans text-[10px] md:text-xs uppercase text-[#7a5c96] font-medium tracking-[0.25em]"
             >
-              Uma história de amor escrita por Deus
+              Uma história de amor escrita por {divineTerm}
             </motion.p>
           </div>
 
